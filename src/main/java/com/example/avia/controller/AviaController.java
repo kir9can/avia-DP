@@ -52,12 +52,12 @@ public class AviaController {
 
     @PutMapping("/grant/permission")
     public ResponseEntity<Object> grantAviaPermissions(AviaPermissionDto permission) {
-        ResponseData response = AviaServiceImpl.grantAviaPermissions(permission);
+        ResponseData response = aviaServiceImpl.grantAviaPermissions(permission);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @PostMapping("/book")
-    public ResponseEntity<Object> bookFlight(@RequestBody BookingDetailsDto bookingDetailsDto) {
+    public ResponseEntity<Object> bookAvia(@RequestBody BookingDetailsDto bookingDetailsDto) {
 
         try {
             return new ResponseEntity<>(aviaBookingService.bookingAvia(bookingDetailsDto), HttpStatus.ACCEPTED);

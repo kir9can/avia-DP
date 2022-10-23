@@ -47,10 +47,10 @@ public class LoginServiceImpl implements LoginService {
         } else if (null != user.getRole()  && user.getRole().equalsIgnoreCase("flightadmin")) {
             return responseForAviaAdmin(user);
         } else if (null != user.getRole() && user.getRole().equalsIgnoreCase("superadmin")) {
-            List<AviaDetails> flightDetails = aviaDetailsRepository.findByPermission("PERMISSION_REQUIRED");
-            if(!flightDetails.isEmpty()) {
+            List<AviaDetails> aviaDetails = aviaDetailsRepository.findByPermission("PERMISSION_REQUIRED");
+            if(!aviaDetails.isEmpty()) {
                 List<String> list  = responseForSuperAdmin(user);
-                flightDetails.stream().forEach(i -> list.add(i.getAviaId().toString()));
+                aviaDetails.stream().forEach(i -> list.add(i.getAviaId().toString()));
                 return list;
             }
             return responseForSuperAdmin(user);
