@@ -12,12 +12,13 @@ import com.example.avia.repository.BookingDetailsRepository;
 import com.example.avia.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public class AviaBookingServiceImpl implements AviaBookingService{
 
     @Autowired
@@ -31,13 +32,13 @@ public class AviaBookingServiceImpl implements AviaBookingService{
 
     @Override
     public String bookingAvia(BookingDetailsDto bookingDetailsDto) throws BookMyAviaException {
-        Optional<AviaDetails> flightDetails = aviaDetailsRepository.findById(bookingDetailsDto.getAviaId());
+        Optional<AviaDetails> aviaDetails = aviaDetailsRepository.findById(bookingDetailsDto.getAviaId());
         Optional<User> userDetails = userRepository.findById(bookingDetailsDto.getBookedBy());
-        if (userDetails.isPresent() && flightDetails.isPresent()) {
-            if(flightDetails.get().getAvailableSeats() < bookingDetailsDto.getPassengerDetails().size()) {
+        if (userDetails.isPresent() && aviaDetails.isPresent()) {
+            if(aviaDetails.get().getAvailableSeats() < bookingDetailsDto.getPassengerDetails().size()) {
                 throw new BookMyAviaException("Seats Not Available. Please try another flight");
             }
-            AviaDetails details = flightDetails.get();
+            AviaDetails details = aviaDetails.get();
             details.setAvailableSeats(details.getAvailableSeats() - bookingDetailsDto.getPassengerDetails().size());
             BookingDetails bookingDetails = new BookingDetails();
             bookingDetails.setAviaDetails(details);
@@ -54,7 +55,7 @@ public class AviaBookingServiceImpl implements AviaBookingService{
             }
 
             bookingDetails.setPassengerDetails(passengerDetails);
-            bookingDetails.setTotalAmount(flightDetails.get().getPrice() * passengerDetails.size());
+            bookingDetails.setTotalAmount(aviaDetails.get().getPrice() * passengerDetails.size());
             aviaDetailsRepository.save(details);
             return bookingDetailsRepository.save(bookingDetails).getBookingId().toString();
 

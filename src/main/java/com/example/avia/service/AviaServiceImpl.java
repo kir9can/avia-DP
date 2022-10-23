@@ -7,16 +7,22 @@ import com.example.avia.entity.AviaDetails;
 import com.example.avia.entity.User;
 import com.example.avia.repository.AviaDetailsRepository;
 import com.example.avia.repository.UserRepository;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.internet.MimeMessage;
 import java.util.Optional;
 @Service
 public class AviaServiceImpl implements AviaService{
     @Autowired
-    private static AviaDetailsRepository aviaDetailsRepository;
+    private  AviaDetailsRepository aviaDetailsRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -24,21 +30,21 @@ public class AviaServiceImpl implements AviaService{
     @Autowired
     private JavaMailSender sender;
 
-    private final static String ACCOUNT_SID = "ACf73ecdd409fb";
-    private final static String AUTH_ID = "d099b8077232a1";
+    private final static String ACCOUNT_SID = "???";
+    private final static String AUTH_ID = "???";
 
     static {
         Twilio.init(ACCOUNT_SID, AUTH_ID);
     }
 
-    public AviaDetails addAvia(AviaDetailsDto flightDetailsDTO) {
+    public AviaDetails addAvia(AviaDetailsDto aviaDetailsDto) {
 
-        AviaDetails flightDetails = new AviaDetails();
-        BeanUtils.copyProperties(flightDetailsDTO, flightDetails);
-        flightDetails.setPermission("PERMISSION_REQUIRED");
-        flightDetails = aviaDetailsRepository.save(flightDetails);
-        sendMailAndSMS(flightDetails.getAviaId());
-        return flightDetails;
+        AviaDetails aviaDetails = new AviaDetails();
+        BeanUtils.copyProperties(aviaDetails, aviaDetails);
+        aviaDetails.setPermission("PERMISSION_REQUIRED");
+        aviaDetails = aviaDetailsRepository.save(aviaDetails);
+        sendMailAndSMS(aviaDetails.getAviaId());
+        return aviaDetails;
     }
 
     @Override
@@ -100,7 +106,7 @@ public class AviaServiceImpl implements AviaService{
             helper.setSubject("Invitation for Flight Approval");
             sender.send(message);
 
-            Message.creator(new PhoneNumber("+375" + user.getMobileNo()), new PhoneNumber("FROM Number"), msg).create();
+            Message.creator(new PhoneNumber("+375" + user.getMobilNumber()), new PhoneNumber("FROM Number"), msg).create();
         } catch (Exception e) {
             System.out.println(e);
             return false;

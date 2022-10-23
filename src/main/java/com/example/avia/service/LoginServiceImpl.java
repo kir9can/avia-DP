@@ -6,10 +6,11 @@ import com.example.avia.entity.User;
 import com.example.avia.repository.AviaDetailsRepository;
 import com.example.avia.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Service
 public class LoginServiceImpl implements LoginService {
 
     private static final String BOOK_FLIGHT = "2. Book flight";
@@ -32,21 +33,21 @@ public class LoginServiceImpl implements LoginService {
     private UserRepository userRepository;
 
     @Autowired
-    private AviaDetailsRepository flightDetailsRepository;
+    private AviaDetailsRepository aviaDetailsRepository;
 
     @Override
     public List<String> loginUser(LoginDto loginDto) {
 
-        User user = userRepository.findByUsernameAnfPassword(loginDto.getUserName(), loginDto.getPassword());
+        User user = userRepository.findByUsernameAndPassword(loginDto.getUserName(), loginDto.getPassword());
         if(null == user) {
             return unauthorizedUser();
         }
         if (null != user.getRole() && user.getRole().equalsIgnoreCase("flightuser")) {
-            return responseForFlightUser(user);
+            return responseForAviaUser(user);
         } else if (null != user.getRole()  && user.getRole().equalsIgnoreCase("flightadmin")) {
-            return responseForFlightAdmin(user);
+            return responseForAviaAdmin(user);
         } else if (null != user.getRole() && user.getRole().equalsIgnoreCase("superadmin")) {
-            List<AviaDetails> flightDetails = flightDetailsRepository.findByPermission("PERMISSION_REQUIRED");
+            List<AviaDetails> flightDetails = aviaDetailsRepository.findByPermission("PERMISSION_REQUIRED");
             if(!flightDetails.isEmpty()) {
                 List<String> list  = responseForSuperAdmin(user);
                 flightDetails.stream().forEach(i -> list.add(i.getAviaId().toString()));
@@ -57,7 +58,7 @@ public class LoginServiceImpl implements LoginService {
         return unauthorizedUser();
     }
 
-    private List<String> responseForFlightUser(User user) {
+    private List<String> responseForAviaUser(User user) {
         List<String> list = new ArrayList<>();
         list.add(CONSTANT + user.getUsername());
         list.add(ACCESS_LEVEL_CONSTANT + user.getRole());
@@ -68,7 +69,7 @@ public class LoginServiceImpl implements LoginService {
         return list;
     }
 
-    private List<String> responseForFlightAdmin(User user) {
+    private List<String> responseForAviaAdmin(User user) {
         List<String> list = new ArrayList<>();
         list.add(CONSTANT + user.getUsername());
         list.add(ACCESS_LEVEL_CONSTANT + user.getRole());

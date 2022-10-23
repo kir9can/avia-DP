@@ -34,7 +34,7 @@ public class AviaController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<Object> addFlight(@RequestBody AviaDetailsDto aviaServiceDto) {
+    public ResponseEntity<Object> addAvia(@RequestBody AviaDetailsDto aviaDetailsDto) {
 
         AviaDetails aviaDetails = aviaServiceImpl.addAvia(new AviaDetailsDto());
 
@@ -43,10 +43,10 @@ public class AviaController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<AviaDetails>> searchFlight(@RequestParam String source,
+    public ResponseEntity<List<AviaDetails>> searchAvia(@RequestParam String source,
                                                           @RequestParam String destination, @RequestParam String sortparam, @RequestParam String date) {
         LocalDate localDate = LocalDate.parse(date);
-        return new ResponseEntity<>(searchAviaService.searchFlight(source, destination, sortparam, localDate),
+        return new ResponseEntity<>(searchAviaService.searchAvia(source, destination, sortparam, localDate),
                 HttpStatus.OK);
     }
 

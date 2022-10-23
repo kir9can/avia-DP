@@ -4,16 +4,17 @@ import com.example.avia.entity.AviaDetails;
 import com.example.avia.exeption.NotFoundException;
 import com.example.avia.repository.AviaDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-
+@Service
 public class SearchAviaService {
     @Autowired
     private AviaDetailsRepository searchAviaRepository;
 
 
-    public List<AviaDetails> searchFlight(String source, String destination, String sortparam, LocalDate date) {
+    public List<AviaDetails> searchAvia(String source, String destination, String sortparam, LocalDate date) {
         String permission = "APPROVED";
         if(sortparam.equalsIgnoreCase("price")) {
             return searchAviaRepository.findBySourceAndDestinationAndDateAndPermissionOrderByPriceAsc(source, destination, date, permission);

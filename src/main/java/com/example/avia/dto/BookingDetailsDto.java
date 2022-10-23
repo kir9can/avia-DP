@@ -8,5 +8,5 @@ import java.util.List;
 public class BookingDetailsDto {
     private int bookedBy;
     private Long aviaId;
-    List<PassengerDetailsDto> passengerDetails;
+    private List<PassengerDetailsDto> passengerDetails;
 }
